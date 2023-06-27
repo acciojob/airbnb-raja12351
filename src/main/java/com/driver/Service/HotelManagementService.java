@@ -3,7 +3,9 @@ package com.driver.Service;
 import com.driver.Exception.AadharMandatory;
 import com.driver.Exception.HotelAlreadyExist;
 import com.driver.Exception.HotelNameRequired;
+import com.driver.Exception.HotelNotFound;
 import com.driver.Repository.HotelManagementRepository;
+import com.driver.model.Booking;
 import com.driver.model.Hotel;
 import com.driver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class HotelManagementService {
@@ -47,5 +50,25 @@ public class HotelManagementService {
         Collections.sort(list, String.CASE_INSENSITIVE_ORDER);
 
         return list.get(0);
+    }
+
+    public int bookRoom(Booking booking) throws HotelNotFound{
+        if(!hotelManagementRepository.findByName(booking.getHotelName())){
+            throw new HotelNotFound("Hotel is not present in the database");
+        }
+        Hotel hotel = hotelManagementRepository.findHotel(booking.getHotelName());
+
+        int pricePerNight = hotel.getPricePerNight();
+
+        if(hotel.getAvailableRooms() < booking.getNoOfRooms()){
+            return -1;
+        }
+        booking.setBookingId(UUID.randomUUID().toString());
+
+        booking.setAmountToBePaid(pricePerNight * booking.getNoOfRooms());
+
+        hotelManagementRepository.bookRoom(booking);
+
+        return booking.getAmountToBePaid();
     }
 }

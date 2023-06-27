@@ -1,5 +1,6 @@
 package com.driver.Repository;
 
+import com.driver.model.Booking;
 import com.driver.model.Hotel;
 import com.driver.model.User;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public class HotelManagementRepository {
 
     private HashMap<String, Hotel> hotelData = new HashMap<>();
     private HashMap<Integer, User> userData = new HashMap<>();
+
+    private HashMap<String, Booking> bookingData = new HashMap<>();
 
     public Boolean findByName(String hotelName) {
         for(String name : hotelData.keySet()){
@@ -49,5 +52,18 @@ public class HotelManagementRepository {
         }
 
         return ans;
+    }
+
+    public Hotel findHotel(String hotelName) {
+        for(String hotel : hotelData.keySet()){
+            if(hotelName.equals(hotel)){
+                return hotelData.get(hotel);
+            }
+        }
+        return null;
+    }
+
+    public void bookRoom(Booking booking) {
+        bookingData.put(booking.getBookingId(), booking);
     }
 }
