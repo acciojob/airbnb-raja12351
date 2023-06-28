@@ -15,8 +15,9 @@ public class HotelManagementRepository {
 
     private HashMap<String, Hotel> hotelData = new HashMap<>();
     private HashMap<Integer, User> userData = new HashMap<>();
-
     private HashMap<String, Booking> bookingData = new HashMap<>();
+
+    private HashMap<Integer,List<Booking>> userBookLink = new HashMap<>();
 
     public Boolean findByName(String hotelName) {
         for(String name : hotelData.keySet()){
@@ -65,5 +66,24 @@ public class HotelManagementRepository {
 
     public void bookRoom(Booking booking) {
         bookingData.put(booking.getBookingId(), booking);
+    }
+
+    public User findUser(int aadharNo) {
+        for(int aadhar : userData.keySet()){
+            if(aadhar == aadharNo){
+                return userData.get(aadhar);
+            }
+        }
+        return null;
+    }
+
+    public void addLink(int aadharNo, Booking booking) {
+        userBookLink.computeIfAbsent(aadharNo, k -> new ArrayList<>());
+
+        userBookLink.get(aadharNo).add(booking);
+    }
+
+    public int getBookings(Integer aadharCard) {
+        return userBookLink.get(aadharCard).size();
     }
 }
